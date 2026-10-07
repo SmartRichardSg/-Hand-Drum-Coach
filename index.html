@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#18212b">
+<title>Hand Drum Coach</title>
+<style>
+:root{--bg:#f5f2ea;--card:#fffdf8;--ink:#20252b;--muted:#69717a;--accent:#b65b35;--accent2:#e7c8b8;--line:#ddd6ca;--good:#3e7d5a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:760px;margin:auto;padding:18px 16px 36px}
+header{padding:10px 2px 18px}h1{margin:0;font-size:30px;letter-spacing:-.5px}h2{font-size:21px;margin:0 0 10px}h3{font-size:17px;margin:0 0 5px}.sub{color:var(--muted);margin:5px 0}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:4px 0 16px}nav button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 4px;min-height:44px;font-weight:700;color:var(--ink)}nav button.active{background:var(--accent);color:white;border-color:var(--accent)}
+section{display:none}section.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:16px;margin-bottom:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+button{font:inherit;cursor:pointer}.primary{background:var(--accent);color:white;border:0;border-radius:12px;padding:12px 15px;font-weight:800;min-height:46px}.secondary{background:transparent;border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-height:44px}.danger{border-color:#c88;background:#fff4f1}
+.stroke{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.stroke b{font-size:23px}.stroke small{display:block;color:var(--muted)}
+.big{font-size:38px;font-weight:850;text-align:center;margin:3px}.tempo{display:flex;align-items:center;justify-content:center;gap:12px}.tempo button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:white;font-size:25px}.tempo input{width:90px;text-align:center;font-size:25px;font-weight:800;border:1px solid var(--line);border-radius:10px;padding:8px}
+.beats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:15px 0}.beat{height:70px;border-radius:12px;background:#ece7de;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800}.beat span{font-size:13px;color:var(--muted)}.beat.on{background:var(--accent);color:white;transform:scale(1.03)}.beat.on span{color:white}
+.pattern{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:10px 0}.cell{height:42px;border-radius:8px;background:#eeeae2;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}.cell.hit{background:var(--accent2);border-color:#c9896c}.cell.accent{background:#d99576;color:white}
+select,input[type=text],input[type=number]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:white;font-size:16px}
+label{display:block;font-size:13px;font-weight:800;color:var(--muted);margin:9px 0 5px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.pill{display:inline-block;border-radius:999px;background:#eeeae2;padding:5px 9px;font-size:12px;font-weight:800}.done{color:var(--good);font-weight:800}.tip{background:#f0ebe2;border-radius:12px;padding:11px;margin-top:10px}
+ul{padding-left:20px}.footer{color:var(--muted);font-size:12px;text-align:center;margin-top:18px}
+@media(max-width:390px){main{padding:14px 11px}.grid3{grid-template-columns:1fr 1fr}.pattern{gap:3px}.cell{font-size:11px}}
+</style>
+</head>
+<body>
+<main id="app">
+<header>
+<h1>🥁 Hand Drum Coach</h1>
+<p class="sub">Learn the basics → lock into the beat → play along with your favourite music.</p>
+</header>
+
+<nav aria-label="Main sections">
+<button class="active" data-tab="learn">Learn</button>
+<button data-tab="practice">Practice</button>
+<button data-tab="songs">Play Along</button>
+<button data-tab="progress">Progress</button>
+</nav>
+
+<section id="learn" class="active">
+<div class="card">
+<h2>1. Learn the 4 basic sounds</h2>
+<div class="grid">
+<div class="stroke"><b>B</b><strong> Bass</strong><small>Hit the centre with a relaxed palm. Deep sound.</small></div>
+<div class="stroke"><b>T</b><strong> Tone</strong><small>Use fingers near the edge. Clear, open sound.</small></div>
+<div class="stroke"><b>S</b><strong> Slap</strong><small>Light, quick fingers near the edge. Crisp sound.</small></div>
+<div class="stroke"><b>R</b><strong> Rest</strong><small>Keep the pulse moving but do not hit.</small></div>
+</div>
+<div class="tip"><b>Beginner rule:</b> relax your hands. Your first goal is a steady pulse, not speed.</div>
+</div>
+<div class="card">
+<h2>2. Your first rhythm</h2>
+<p>Count <b>1 & 2 & 3 & 4 &</b>. Play:</p>
+<div class="pattern" id="learnPattern"></div>
+<p><span class="pill">B = bass</span> <span class="pill">T = tone</span> <span class="pill">R = rest</span></p>
+<button class="primary" id="markLesson">✓ Mark lesson complete</button>
+</div>
+</section>
+
+<section id="practice">
+<div class="card">
+<h2>Beat Trainer</h2>
+<p class="sub">Start slowly. Follow the highlighted beat and say the count aloud.</p>
+<div class="tempo"><button id="minus">−</button><input id="bpm" type="number" min="40" max="220" value="80" aria-label="Tempo BPM"><button id="plus">+</button></div>
+<div class="big"><span id="bpmText">80</span> BPM</div>
+<div class="beats" id="beats">
+<div class="beat"><span>1</span>B</div><div class="beat"><span>2</span>T</div><div class="beat"><span>3</span>B</div><div class="beat"><span>4</span>T</div>
+</div>
+<div class="row"><button class="primary" id="play">▶ Start</button><button class="secondary" id="resetBeat">Reset</button></div>
+</div>
+<div class="card">
+<h2>3-minute challenge</h2>
+<p>Play this pattern continuously. Keep your hands relaxed and don't chase the metronome.</p>
+<div class="pattern" id="practicePattern"></div>
+<div class="grid3">
+<div><b>1 min</b><br><small>Slow & clean</small></div>
+<div><b>1 min</b><br><small>Steady groove</small></div>
+<div><b>1 min</b><br><small>Play with feeling</small></div>
+</div>
+<button class="primary" id="challenge">Start 3-minute challenge</button>
+<p id="challengeMsg" aria-live="polite"></p>
+</div>
+</section>
+
+<section id="songs">
+<div class="card">
+<h2>Play Along Mode</h2>
+<p class="sub">Choose a groove, enter the approximate BPM of the song, then start. You can find a song's BPM from a music app or by tapping along yourself.</p>
+<label for="groove">Groove</label>
+<select id="groove">
+<option value="pop">Pop / 4-beat</option>
+<option value="rock">Rock / backbeat</option>
+<option value="ballad">Slow ballad</option>
+<option value="reggae">Reggae feel</option>
+</select>
+<label for="songBpm">Song tempo (BPM)</label>
+<input id="songBpm" type="number" min="40" max="220" value="100">
+<div class="tip" id="grooveTip"></div>
+<div class="pattern" id="songPattern"></div>
+<button class="primary" id="songStart">▶ Play Along</button>
+</div>
+<div class="card">
+<h2>Your song practice list</h2>
+<label for="songName">Song you want to learn</label>
+<input id="songName" type="text" placeholder="e.g. My favourite song">
+<div class="row" style="margin-top:10px"><button class="primary" id="addSong">Add song</button></div>
+<div id="songList" style="margin-top:12px"></div>
+</div>
+</section>
+
+<section id="progress">
+<div class="card">
+<h2>My progress</h2>
+<div class="grid">
+<div><span class="pill">Lessons</span><h3 id="lessonsDone">0 / 1</h3></div>
+<div><span class="pill">Challenges</span><h3 id="challengeCount">0</h3></div>
+</div>
+<div class="tip"><b>Next target:</b> play the basic groove comfortably at 80 BPM for 3 minutes, then increase by 5 BPM.</div>
+</div>
+<div class="card">
+<h2>Weekly routine</h2>
+<ul>
+<li>Day 1–2: basic sounds, 10 minutes</li>
+<li>Day 3–4: beat trainer, 10–15 minutes</li>
+<li>Day 5: one favourite song, 15 minutes</li>
+<li>Day 6: repeat the song and change the groove</li>
+<li>Day 7: free play — have fun</li>
+</ul>
+</div>
+<div class="card">
+<h2>Safety & technique</h2>
+<p>Keep wrists and fingers relaxed. Stop if you feel pain, numbness or unusual discomfort. Speed comes after control.</p>
+</div>
+</section>
+
+<p class="footer">Hand Drum Coach • Designed for simple daily practice • Your practice data stays on this device.</p>
+</main>
+
+<script>
+(function(){
+const root=document.getElementById('app');
+let timer=null, beatIndex=0, challengeTimer=null;
+let state={lessons:false,challenges:0,songs:[]};
+try{state=JSON.parse(localStorage.getItem('handDrumCoach')||'null')||state}catch(e){}
+const save=()=>{try{localStorage.setItem('handDrumCoach',JSON.stringify(state))}catch(e){};updateProgress();renderSongs()};
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const patterns={
+pop:["B","R","T","R","B","R","T","R"],
+rock:["B","R","T","R","B","R","S","R"],
+ballad:["B","R","R","R","T","R","R","R"],
+reggae:["R","T","B","R","R","T","B","R"]
+};
+function renderPattern(elId,arr){
+ const el=document.getElementById(elId);el.innerHTML='';
+ arr.forEach((x,i)=>{const d=document.createElement('div');d.className='cell '+(x==='B'?'accent':x==='R'?'':'hit');d.textContent=x;el.appendChild(d)});
+}
+renderPattern('learnPattern',["B","R","T","R","B","R","T","R"]);
+renderPattern('practicePattern',patterns.pop);
+
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+ document.querySelectorAll('section').forEach(x=>x.classList.remove('active'));
+ document.getElementById(b.dataset.tab).classList.add('active');
+}));
+
+const bpm=document.getElementById('bpm'),bpmText=document.getElementById('bpmText');
+function setBpm(v){v=clamp(parseInt(v)||80,40,220);bpm.value=v;bpmText.textContent=v;if(timer)restart()}
+function restart(){stop();start()}
+document.getElementById('minus').onclick=()=>setBpm(+bpm.value-5);
+document.getElementById('plus').onclick=()=>setBpm(+bpm.value+5);
+bpm.addEventListener('change',()=>setBpm(bpm.value));
+
+function tick(){
+ const cells=[...document.querySelectorAll('#beats .beat')];cells.forEach(x=>x.classList.remove('on'));
+ cells[beatIndex%4].classList.add('on'); beatIndex=(beatIndex+1)%4;
+}
+function start(){
+ if(timer)return;beatIndex=0;tick();timer=setInterval(tick,60000/clamp(+bpm.value||80,40,220));
+ document.getElementById('play').textContent='■ Stop';
+}
+function stop(){if(timer){clearInterval(timer);timer=null}document.querySelectorAll('#beats .beat').forEach(x=>x.classList.remove('on'));document.getElementById('play').textContent='▶ Start'}
+document.getElementById('play').onclick=()=>timer?stop():start();
+document.getElementById('resetBeat').onclick=()=>{stop();beatIndex=0};
+
+document.getElementById('markLesson').onclick=()=>{state.lessons=true;save();document.getElementById('markLesson').textContent='✓ Lesson completed'};
+
+document.getElementById('challenge').onclick=()=>{
+ if(challengeTimer){clearTimeout(challengeTimer);challengeTimer=null;document.getElementById('challenge').textContent='Start 3-minute challenge';document.getElementById('challengeMsg').textContent='Challenge stopped.';return}
+ start();document.getElementById('challenge').textContent='■ Stop challenge';document.getElementById('challengeMsg').textContent='3:00 remaining — keep the groove steady.';
+ let end=Date.now()+180000;
+ const countdown=setInterval(()=>{let left=Math.max(0,end-Date.now());document.getElementById('challengeMsg').textContent=Math.ceil(left/1000)+' seconds remaining — keep the groove steady.';if(left<=0){clearInterval(countdown);stop();challengeTimer=null;state.challenges++;save();document.getElementById('challenge').textContent='Start 3-minute challenge';document.getElementById('challengeMsg').textContent='🎉 Challenge complete!'}} ,1000);
+ challengeTimer={stop:()=>{clearInterval(countdown)}};
+};
+
+const groove=document.getElementById('groove'),songBpm=document.getElementById('songBpm'),songPattern=document.getElementById('songPattern'),grooveTip=document.getElementById('grooveTip');
+const tips={pop:"Use a simple B–T groove. Your goal is to stay with the singer and kick/bass feel.",rock:"Make beats 2 and 4 crisp. Keep the bass strong on 1 and 3.",ballad:"Leave space. Play softly and let the notes breathe.",reggae:"Keep the off-beat tones light and relaxed."};
+function updateGroove(){let p=patterns[groove.value];renderPattern('songPattern',p);grooveTip.textContent=tips[groove.value];}
+groove.onchange=updateGroove;updateGroove();
+let songTimer=null,songBeat=0;
+function songTick(){const cells=[...songPattern.children];cells.forEach(c=>c.classList.remove('accent'));cells[songBeat%8].classList.add('accent');songBeat++}
+document.getElementById('songStart').onclick=()=>{
+ if(songTimer){clearInterval(songTimer);songTimer=null;document.getElementById('songStart').textContent='▶ Play Along';songPattern.querySelectorAll('.cell').forEach(c=>c.classList.remove('accent'));return}
+ songBeat=0;songTick();songTimer=setInterval(songTick,60000/clamp(+songBpm.value||100,40,220)/2);document.getElementById('songStart').textContent='■ Stop';
+};
+
+function renderSongs(){
+ const el=document.getElementById('songList');el.innerHTML='';
+ if(!state.songs.length){el.innerHTML='<p class="sub">No songs added yet. Add one above.</p>';return}
+ state.songs.forEach((s,i)=>{const d=document.createElement('div');d.className='card';d.style.margin='8px 0 0';d.innerHTML='<strong>'+escapeHtml(s)+'</strong><button class="secondary" style="float:right" data-i="'+i+'">Done</button>';d.querySelector('button').onclick=()=>{state.songs.splice(i,1);save()};el.appendChild(d)})
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+document.getElementById('addSong').onclick=()=>{const i=document.getElementById('songName');let s=i.value.trim();if(!s)return;i.value='';state.songs.push(s);save()};
+function updateProgress(){document.getElementById('lessonsDone').textContent=(state.lessons?1:0)+' / 1';document.getElementById('challengeCount').textContent=state.challenges}
+updateProgress();renderSongs();
+})();
+</script>
+</body>
+</html>
